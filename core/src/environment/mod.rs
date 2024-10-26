@@ -633,6 +633,15 @@ impl Environment {
         self
     }
 
+    /// Obtains the current underlying [`CacheDB`] instance
+    /// after a read lock was acquired to inspect the current execution state
+    pub fn db(&self) -> Result<CacheDB<EmptyDB>, ArbiterCoreError> {
+        match self.db.state.read() {
+            Ok(cache_db) => Ok(cache_db.clone()),
+            Err(err) => Err(ArbiterCoreError::RwLockError(err.to_string())),
+        }
+    }
+
     /// Stops the execution of the environment and returns the [`ArbiterDB`] in
     /// its final state.
     pub fn stop(mut self) -> Result<ArbiterDB, ArbiterCoreError> {
