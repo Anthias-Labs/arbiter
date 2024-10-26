@@ -66,6 +66,7 @@ fn main() {
 - `Instruction::Cheatcode`: Execute one of the `Cheatcodes` on the `Environment`'s world state. 
 The `Cheatcodes` include:
     - `Cheatcodes::Deal`: Used to set the raw ETH balance of a user. Useful when you need to pay gas fees in a transaction.
+    - `Cheatcodes::AddAccount`: Initializes a new default account if it doesn't exist.
     - `Cheatcodes::Load`: Gets the value of a storage slot of an account. 
     - `Cheatcodes::Store`: Sets the value of a storage slot of an account.
     - `Cheatcodes::Access`: Gets the account at an address.

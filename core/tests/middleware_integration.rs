@@ -303,6 +303,47 @@ async fn deal_missing_account() {
 }
 
 #[tokio::test]
+async fn add_account_cheatcode() {
+    let (_environment, client) = startup();
+
+    // First try to add balance to the non-existent new_address account
+    // It should faill
+    client
+        .apply_cheatcode(Cheatcodes::Deal {
+            address: client.default_sender().unwrap(),
+            amount: eU256::from(1),
+        })
+        .await
+        .unwrap();
+    let mut new_address = client.address().0;
+    new_address[0] = new_address[0].wrapping_add(1);
+    let new_address = eAddress::from(new_address);
+    let balance = client.get_balance(new_address, None).await;
+    assert!(balance.is_err());
+
+    // Then add the new_address account
+    client
+        .apply_cheatcode(Cheatcodes::AddAccount {
+            address: new_address,
+        })
+        .await
+        .unwrap();
+
+    // And fill it up
+    let new_balance = eU256::from(32);
+    client
+        .apply_cheatcode(Cheatcodes::Deal {
+            address: new_address,
+            amount: new_balance,
+        })
+        .await
+        .unwrap();
+
+    let balance = client.get_balance(new_address, None).await.unwrap();
+    assert_eq!(balance, new_balance);
+}
+
+#[tokio::test]
 async fn set_gas_price() {
     let (_environment, client) = startup();
     assert_eq!(client.get_gas_price().await.unwrap(), eU256::from(0));

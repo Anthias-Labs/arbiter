@@ -426,8 +426,15 @@ impl Middleware for ArbiterMiddleware {
             Some(&to) => TransactTo::Call(to.to_fixed_bytes().into()),
             None => TransactTo::Create(CreateScheme::Create),
         };
+
+        // Extract `from` field if it exists
+        let caller = match tx.from() {
+            Some(&from) => from.to_fixed_bytes().into(),
+            None => self.address().to_fixed_bytes().into(),
+        };
+
         let tx_env = TxEnv {
-            caller: self.address().to_fixed_bytes().into(),
+            caller,
             gas_limit: u64::MAX,
             gas_price: revm::primitives::U256::from_limbs(self.get_gas_price().await?.0),
             gas_priority_fee: None,

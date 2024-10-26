@@ -223,6 +223,12 @@ pub enum Cheatcodes {
         /// The address of the account to fetch.
         address: ethers::types::Address,
     },
+    /// An `AddAccount` is used to add a default/unfunded account.
+    /// If the account exists, the value is updated.
+    AddAccount {
+        /// The address of the account to be added.
+        address: eAddress,
+    },
 }
 
 /// Wrapper around [`AccountState`] that can be serialized and deserialized.
@@ -263,5 +269,12 @@ pub enum CheatcodesReturn {
         account_state: AccountStateSerializable,
         /// Storage slots of the account.
         storage: HashMap<U256, U256>,
+    },
+
+    /// A `AddAccount` returns nothing.
+    AddAccount {
+        /// Basic account information of inserted account like nonce, balance,
+        /// code hash, bytcode.
+        info: AccountInfo,
     },
 }

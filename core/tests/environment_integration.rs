@@ -142,11 +142,18 @@ async fn middleware_from_forked_eo() {
 }
 
 #[tokio::test]
-async fn env_returns_db() {
+async fn env_returns_db_after_stop() {
     let (environment, client) = startup();
     deploy_arbx(client).await;
     let db = environment.stop().unwrap();
     assert!(!db.state.read().unwrap().accounts.is_empty())
+}
+
+#[tokio::test]
+async fn env_returns_db_mid_execution() {
+    let (environment, client) = startup();
+    deploy_arbx(client).await;
+    assert!(!environment.db().unwrap().accounts.is_empty())
 }
 
 #[tokio::test]
